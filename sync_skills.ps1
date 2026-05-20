@@ -19,7 +19,8 @@ Write-Host "=== Vedic Skills 三地同步 ===" -ForegroundColor Cyan
 Write-Host "`n[1/3] 同步到 claude-code..." -ForegroundColor Yellow
 foreach ($skill in $skills) {
     if (Test-Path "$src\$skill") {
-        Copy-Item "$src\$skill" "$cc\$skill" -Recurse -Force
+        if (-not (Test-Path "$cc\$skill")) { New-Item -Path "$cc\$skill" -ItemType Directory -Force | Out-Null }
+        Copy-Item "$src\$skill\*" "$cc\$skill\" -Recurse -Force
         Write-Host "  ✓ $skill" -ForegroundColor Green
     }
 }
