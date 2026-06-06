@@ -17,13 +17,24 @@ def calculate_ashtakavarga_fixed(year, month, day, hour, minute, lat, lon, tz_of
         }
     """
     import sys
+    import os
     import swisseph as swe
 
-    pyjhora_path = r'd:\0417jhora\vedic-calc-env\Lib\site-packages'
-    sys.path = [p for p in sys.path if 'Python314' not in p and 'Python313' not in p]
+    pyjhora_path = None
+    try:
+        import jhora as _jh
+        pyjhora_path = os.path.dirname(os.path.dirname(_jh.__file__))
+    except ImportError:
+        import site
+        for sp in site.getsitepackages():
+            if os.path.exists(os.path.join(sp, 'jhora')):
+                pyjhora_path = sp
+                break
+    if pyjhora_path is None:
+        raise ImportError("jhora package not found")
     if pyjhora_path not in sys.path:
         sys.path.insert(0, pyjhora_path)
-    swe.set_ephe_path(r'd:\0417jhora\vedic-calc-env\Lib\site-packages\jhora\data\ephe')
+    swe.set_ephe_path(os.path.join(pyjhora_path, 'jhora', 'data', 'ephe'))
 
     # Monkey-patch
     for fn_name in ['calc_ut', 'calc']:

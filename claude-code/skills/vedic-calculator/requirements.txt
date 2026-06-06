@@ -1,0 +1,5 @@
+# Python >=3.8, <=3.13 (pysweph C extension requires pre-built wheel)
+pysweph>=2.10
+dashaflow>=0.3
+PyJHora>=4.8.0
+pytz>=2024.1
