@@ -1,5 +1,5 @@
 """
-vedic-calculator v0.2 - 完整原型
+vedic-calculator v0.3 - 完整原型
 基于pysweph + dashaflow算法模块
 输出完整的structured_data所需数据
 """
@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import pytz
 import json
 import sys
+import warnings
 
 # dashaflow模块
 from dashaflow.ashtakavarga import calculate_ashtakavarga
@@ -21,6 +22,11 @@ try:
     from ashtakavarga_pyjhora import calculate_ashtakavarga_fixed as _av_pyjhora
 except ImportError:
     _av_pyjhora = None
+    warnings.warn(
+        "[vedic-calculator] ashtakavarga_pyjhora 未加载，SAV 将使用 dashaflow（精度较低）。"
+        "请确保 vedic-calculator/scripts 目录在 sys.path 中，且 PyJHora 已正确安装。",
+        RuntimeWarning, stacklevel=2
+    )
 try:
     from divisional_pyjhora import calculate_divisional_charts as _div_pyjhora
 except ImportError:
@@ -458,11 +464,14 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
             _tz_dt = tz.localize(datetime(year, month, day, hour, minute))
             _tz_offset = _tz_dt.utcoffset().total_seconds() / 3600.0
             ashtak = _av_pyjhora(year, month, day, hour, minute, lat, lon, _tz_offset)
-        except Exception:
+        except Exception as e:
             ashtak = None
+            print(f"⚠️ WARNING: PyJHora SAV 计算失败 ({e})，将使用 dashaflow fallback（精度较低）", file=sys.stderr)
     
     if ashtak is None:
-        # Fallback to dashaflow
+        # Fallback to dashaflow — SAV 可能有 5/12 星座偏差！
+        print("⚠️ WARNING: SAV 使用 dashaflow 计算（非 PyJHora）。结果可能与 JHora 有偏差！", file=sys.stderr)
+        print("   修复方法: 运行 setup_env.py 或确保 PyJHora + scripts 目录在 sys.path 中", file=sys.stderr)
         from dashaflow.ashtakavarga import calculate_ashtakavarga
         planets_in_signs = {name: p['sign_idx'] for name, p in planets.items() if name not in ['Rahu','Ketu']}
         planets_in_signs['Rahu'] = planets['Rahu']['sign_idx']

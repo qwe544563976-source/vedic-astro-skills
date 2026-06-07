@@ -88,19 +88,20 @@ vedic-rectifier/
 | 要求 Requirement | 说明 Details |
 |:---|:---|
 | **Python** | 3.8 ~ 3.13 （3.14 暂不支持 / not yet supported） |
-| **安装 Install** | `pip install -r vedic-calculator/requirements.txt` |
+| **安装 Install** | 运行 `setup_env.py`（见下方 / see below） |
 
 ```bash
-# 依赖清单 / Dependencies
-pysweph>=2.10      # Swiss Ephemeris — 天文计算引擎 / astronomical engine
-dashaflow>=0.3     # 尊贵度 + Karakas / dignity + Jaimini Karakas
-PyJHora==4.8.6     # SAV/BAV + 分盘 + Shadbala / divisional charts + strength
-pytz>=2024.1       # 时区 / timezone
+# 推荐：使用自动安装脚本（处理依赖冲突 + 自动验证）
+# Recommended: Use the auto-setup script (handles dependency conflicts + auto-validates)
+python vedic-calculator/scripts/setup_env.py
+
+# ⚠️ 不要直接 pip install -r requirements.txt（dashaflow 依赖冲突）
+# ⚠️ Do NOT use pip install -r requirements.txt (dependency conflict with dashaflow)
 ```
 
-> 💡 AI 首次运行时会自动检测环境并安装依赖。但 **请确保系统已安装 Python 3.8~3.13**，否则自动安装会失败。
+> 💡 AI 首次运行时会自动检测环境并运行 `setup_env.py`。但 **请确保系统已安装 Python 3.8~3.13**。
 >
-> The AI agent will auto-detect and install dependencies on first run. But **make sure Python 3.8~3.13 is installed on your system**, otherwise auto-install will fail.
+> The AI agent will auto-detect and run `setup_env.py` on first use. But **make sure Python 3.8~3.13 is installed on your system**.
 
 ---
 
@@ -284,6 +285,7 @@ vedic-astro-skills/
 │   │   ├── requirements.txt         # Python 依赖
 │   │   └── scripts/
 │   │       ├── engine.py            # 主计算引擎
+│   │       ├── setup_env.py         # 环境自动搭建脚本 (NEW)
 │   │       ├── formatter.py         # structured_data 输出
 │   │       ├── transit.py           # 过运计算
 │   │       ├── shadbala_pyjhora.py  # Shadbala 修正层
