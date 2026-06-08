@@ -6,6 +6,25 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased] - 2026-06-09
+
+### Codex 原生支持
+
+- 新增 `codex/skills/`，包含全部6个skill及 `agents/openai.yaml`
+- 保持算法、资源和业务规则与Antigravity/Claude Code版本同步
+- 仅替换Codex平台所需的文件读取、图片查看、文件写入和安装路径说明
+
+### Calculator-first 数据优先级
+
+- `structured_data.md` 默认以calculator结果为主数据
+- PDF/截图/文本用于提取出生信息和交叉验证，不覆盖非Shadbala字段
+- Shadbala始终先生成calc基准；无PDF时直接采用calc
+- 有同一出生时间的有效PDF时逐行对照并展示PDF值
+- 不一致时明确提示“calc与PDF不一致；当前采用PDF”，同时保留calc基准
+- 出生时间校准后禁止复用旧PDF Shadbala
+
+---
+
 ## [v6.1] - 2026-06-08
 
 > 🎯 **精度修正 + 隐藏 bug 清除 + fail-fast 架构**

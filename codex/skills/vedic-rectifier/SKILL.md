@@ -379,9 +379,10 @@ Nakshatra边界：每13°20'（即每个星座内 0°00', 13°20', 26°40'）
 ✅ 已用新时间重新计算全部数据（Dasha/分盘/过运），structured_data.md 已更新。
 
 下一步：
-  a) 直接进入vedic-core分析
-  b) 发送JHora PDF补充更精确的Shadbala值（可选）
-  c) 出几道盲审问题验证校准结果（可选）
+  a) 直接进入vedic-core分析（已用calc engine重算Shadbala）
+  b) 出几道盲审问题验证校准结果（推荐）
+  c) 用新时间 [HH:MM] 重排 JHora 发来新 PDF 补充最精确 Shadbala（可选，推荐）
+     ⚠️ 旧 PDF 的 Shadbala 基于原始时间，校准后无效，请勿复用
 
 详细报告见 rectification_report.md。
 ```

@@ -163,8 +163,10 @@ structured_data.md 生成后，向用户输出：
 ✅ 排盘完成！所有数据已生成（行星/分盘/SAV/Dasha+小运/宫主表/尊贵度/过运…）
 
 📊 Shadbala 精度说明：
-   calc 计算精度 >97%（强弱排序与JHora一致），已可直接使用。
-   如你有 JHora PDF，可发来补充更精确的 Shadbala 值。
+   structured_data以calc为主数据源。
+   Shadbala始终先写入calc基准值。如没有JHora PDF，直接采用calc。
+   如有同一出生时间生成的JHora PDF，则逐行对照并展示PDF值；
+   二者不一致时会明确提示"当前采用PDF"。其余PDF数据只用于交叉验证。
 
 下一步：
   a) 直接进入验前事（推荐）
@@ -172,7 +174,10 @@ structured_data.md 生成后，向用户输出：
 ```
 
 - 用户选 a) 或说"直接分析"/"开始" → 触发 vedic-reader（精简模式：跳过提取，直接读 structured_data → 验前事）
-- 用户发送 PDF → 从 PDF 文本层提取 Shadbala → 替换 calc 值 → 再触发 reader 验前事
+- 用户发送 PDF → 核对出生信息一致性 → 从PDF文本层提取有效Shadbala
+  → 与calc Shadbala逐行对照 → PDF存在的行展示PDF值，差异行标注并提示用户
+  → PDF缺失行保留calc → 其余PDF数据仅交叉验证
+  → 再触发reader验前事
 
 
 ## engine 返回数据结构
@@ -308,11 +313,12 @@ chart = {
 路径1（纯calc，推荐）：
   用户给出生信息 → vedic-calculator → structured_data.md → vedic-reader(验前事) → vedic-core
 
-路径2（PDF + calc借力）：
-  用户给PDF → vedic-reader(提取出生信息) → vedic-calculator(算所有数据) → reader(验前事) → core
+路径2（PDF + calc主数据）：
+  用户给PDF → reader提取出生信息 → calculator生成canonical structured_data
+  → PDF交叉验证（仅有效Shadbala可覆盖）→ reader(验前事) → core
 
 路径3（兜底）：
-  用户只给截图/粘贴文本 → vedic-reader(传统提取) → 借力calc补算分盘/SAV → reader(验前事) → core
+  用户材料无法提供完整出生信息 → reader提取模式（标注降级）→ reader(验前事) → core
 ```
 
 所有路径输出的 structured_data.md 格式完全一致，core 无需区分数据来源。

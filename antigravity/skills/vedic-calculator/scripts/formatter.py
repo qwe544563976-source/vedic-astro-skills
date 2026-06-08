@@ -105,8 +105,8 @@ def format_structured_data(chart, transit_data, meta, user_info):
     
     # Shadbala
     lines.append("### Shadbala")
-    lines.append("| 行星 | Rupas | 百分比 | 排名 | 强弱 | IshtaPhala | KashtaPhala |")
-    lines.append("|------|-------|--------|------|------|-----------|-------------|")
+    lines.append("| 行星 | Rupas | 百分比 | 排名 | 强弱 | IshtaPhala | KashtaPhala | calc基准 | 数据来源/校验 |")
+    lines.append("|------|-------|--------|------|------|-----------|-------------|----------|---------------|")
     sb = chart['shadbala']
     if 'error' not in sb:
         # Extract rupas for sorting
@@ -121,9 +121,14 @@ def format_structured_data(chart, transit_data, meta, user_info):
             strength = '强' if pct >= 150 else ('中' if pct >= 100 else '弱')
             ishta = round(val.get('ishta_phala', 0), 2)
             kashta = round(val.get('kashta_phala', 0), 2)
-            lines.append(f"| {name} | {rupas} | {pct}% | {rank} | {strength} | {ishta} | {kashta} |")
+            baseline = f"{rupas} / {pct}%"
+            lines.append(
+                f"| {name} | {rupas} | {pct}% | {rank} | {strength} | "
+                f"{ishta} | {kashta} | {baseline} | calc |"
+            )
     lines.append("")
     lines.append("> 来源: vedic-calculator引擎 (PyJHora + 9项修正)")
+    lines.append("> 如导入同一出生时间的JHora PDF，逐行对照Shadbala；有PDF的行展示PDF值，不一致时标注“calc与PDF不一致；当前采用PDF”。")
     lines.append("> 强: ≥150% | 中: 100-149% | 弱: <100%\n")
     
     # SAV

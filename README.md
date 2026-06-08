@@ -140,7 +140,7 @@ Chart file (PDF/image/text)      Birth info (date+time+place)
 | Skill | 功能 Function | 触发词 Trigger |
 |:------|:------|:------|
 | 🧮 **calculator** | 原生排盘引擎，给出生时间直接计算 / Native chart engine | "直接排盘" "计算星盘" "快速排盘" |
-| 📖 **reader** | 从 PDF/截图提取星盘数据 + 16条校验 / Extract from PDF/image | "读盘" "星盘" "印占" "占星" "看盘" |
+| 📖 **reader** | 从 PDF/截图提取出生信息，以calc生成主数据并执行16条校验 / Extract birth data, calculate, and validate | "读盘" "星盘" "印占" "占星" "看盘" |
 | 🔬 **core** | P1-P12行星审计 + 宫位诊断 + 十大板块 / Planet audit + life summary | "开始分析" "帮我分析" "星盘审计" |
 | 💼 **career** | 4Phase职业蓝图 / Career blueprint | "分析事业" "职业分析" |
 | 💘 **love** | 3Step恋爱时机分析 / Love timing analysis | "分析感情" "恋爱运势" "桃花时机" |
@@ -164,7 +164,8 @@ Chart file (PDF/image/text)      Birth info (date+time+place)
 
 场景2：有 JHora PDF
 用户: [发送PDF] 读盘
- AI: → reader 从 PDF 提取数据 + 16条校验
+ AI: → reader 从 PDF 提取出生信息 → calculator生成主数据
+    → PDF数据做交叉验证（Shadbala例外：有PDF则对照并展示PDF值）
     → 输出 structured_data.md
 
 场景3：什么都没带
@@ -183,7 +184,7 @@ Chart file (PDF/image/text)      Birth info (date+time+place)
 用户输入
   │
   ├─ 提供了出生时间 ──→ 自动调用 vedic-calculator ──→ structured_data.md
-  ├─ 提供了 PDF/截图 ──→ reader 三阶段提取+校验 ──→ structured_data.md
+  ├─ 提供了 PDF/截图 ──→ reader提取出生信息 ──→ calculator主数据 ──→ PDF交叉验证
   └─ 什么都没提供   ──→ 弹出引导菜单
 ```
 
@@ -193,11 +194,12 @@ Chart file (PDF/image/text)      Birth info (date+time+place)
 
 > 💡 **关于 PDF 补充：** calculator 排盘完成后会提示：
 > - **a) 直接进入分析**（推荐）— calc 精度 >97%，排序与 JHora 一致，可直接用
-> - **b) 发送 JHora PDF 补充** — 可选，用 PDF 中更精确的 Shadbala 值替换
+> - **b) 发送 JHora PDF 补充** — 可选；先与calc逐行对照，再展示PDF Shadbala值
+> - 若二者不一致，报告会明确标注“calc与PDF不一致；当前采用PDF”，并保留calc基准
 >
 > 不补充也完全不影响分析质量。
 >
-> **About PDF supplement:** After calculator finishes, it offers an optional step to supplement with JHora PDF for marginally more precise Shadbala values. This is entirely optional — calc accuracy is >97%.
+> **About PDF supplement:** Calculator output is canonical. PDF data is used for cross-validation; valid Shadbala values are compared row by row and displayed from the PDF, with differences explicitly flagged and the calc baseline retained.
 
 ---
 
@@ -250,9 +252,9 @@ Chart file (PDF/image/text)      Birth info (date+time+place)
 
 ### 📖 vedic-reader — 读盘引擎 / Chart Reader
 
-从 PDF/截图/文本中提取星盘数据。三阶段执行引擎，16条数学校验。
+从 PDF/截图/文本中提取出生信息，以calculator生成主数据，再执行交叉验证和16条数学校验。
 
-Extracts chart data from PDF/image/text. Three-phase execution engine with 16 mathematical validations.
+Extracts birth data from PDF/image/text, generates canonical calculator data, then cross-validates it with 16 mathematical checks.
 
 ---
 

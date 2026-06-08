@@ -2,6 +2,22 @@
 
 > 本文档定义了 structured_data.md 的数据标准。
 > 数据由 vedic-calculator 或 vedic-reader 生成，由 core/career/love 消费。
+
+## 数据源优先级
+
+> **主数据规则：calculator > PDF/截图/文本提取。**
+>
+> 只要出生日期、时间、地点完整，`vedic-calculator` 生成的数据就是
+> `structured_data.md` 的 canonical source。PDF、截图和文本提取用于交叉验证，
+> 不覆盖行星位置、分盘、Dasha、SAV/BAV、宫主、尊贵度、相位、特殊点或过运。
+>
+> **唯一例外是 Shadbala：**
+> - 始终先计算并保留calculator基准值；
+> - PDF无Shadbala或提取失败时，直接写入calculator值；
+> - 同一出生时间生成的PDF含有效Shadbala时，逐行与calculator对照，最终展示PDF值；
+> - 两者不一致时，必须向用户提示，并标注“calc与PDF不一致；当前采用PDF”；
+> - 两者一致时标注“PDF校验一致”，PDF缺失行继续使用calculator值；
+> - 出生时间校准后，旧PDF Shadbala无效，只有新时间重排的PDF可覆盖。
 > 所有字段为必须，除非标注[可选]。
 
 ---
@@ -97,18 +113,19 @@ Node模式: [Mean Node / True Node]
 ## 量化数据
 
 ### Shadbala
-| 行星 | Rupas | 百分比 | 排名 | 强弱 | 数据来源 |
-|------|-------|--------|------|------|---------|
-| [planet] | [val] | [pct]% | [rank] | [强/中/弱] | [JHora/calc] |
+| 行星 | Rupas | 百分比 | 排名 | 强弱 | IshtaPhala | KashtaPhala | calc基准 | 数据来源/校验 |
+|------|-------|--------|------|------|-------------|--------------|----------|---------------|
+| [planet] | [展示值] | [展示值]% | [rank] | [强/中/弱] | [val] | [val] | [calc rupas / pct] | [calc / PDF校验一致 / calc与PDF不一致；当前采用PDF] |
 
 > 强: ≥150% | 中: 100-149% | 弱: <100%
 
 > **⚠️ 数据来源优先级**：
-> 1. **JHora PDF**（金标准）→ 提取原始 Rupas/百分比，精度最高
-> 2. **calc engine**（近似值）→ 仅用于**相对排序和分级**，不应直接对比绝对数值
-> 3. PyJHora 底层 Shadbala 算法与 JHora 存在系统性偏差（分盘蝴蝶效应、aspect插值公式、日出折射等），
+> 1. **calc engine先行** → 始终先生成Shadbala基准；没有PDF时直接展示
+> 2. **JHora PDF对照** → 同一出生时间下逐行比较；有PDF时展示PDF值
+> 3. **差异可见** → 不一致必须提示用户，并保留calc基准供审计
+> 4. PyJHora 底层 Shadbala 算法与 JHora 存在系统性偏差（分盘蝴蝶效应、aspect插值公式、日出折射等），
 >    平均每颗行星偏差 1-2 rupas，个别可达 4 rupas。**排序基本正确，数值不精确。**
-> 4. 下游（core/love/career）引用时，以**排序和强弱分级**为准，避免引用具体数值
+> 5. 下游（core/love/career）引用时，以**排序和强弱分级**为准，避免引用具体数值
 
 ### SAV (Sarvashtakavarga)
 
