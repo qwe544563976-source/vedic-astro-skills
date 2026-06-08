@@ -17,7 +17,7 @@
 >
 > Six specialized skills working together — from native chart calculation to complete life audit.
 
-**兼容 Antigravity 和 Claude Code。** Compatible with Antigravity and Claude Code.
+**兼容 Antigravity、Claude Code 和 Codex。** Compatible with Antigravity, Claude Code, and Codex.
 
 ---
 
@@ -39,24 +39,24 @@
 ### Step 1: 安装 Skill 文件 / Install skill files
 
 <details>
-<summary><b>Claude Code / Codex</b></summary>
+<summary><b>Codex</b></summary>
 
 ```bash
 # 从 GitHub 安装全部 6 个 skill（缺一不可）
 # Install all 6 skills from GitHub (all required)
 
-# 方式1：clone 后手动复制
 git clone https://github.com/CNWU16/vedic-astro-skills.git
-cp -r vedic-astro-skills/claude-code/skills/vedic-* ~/.codex/skills/
-# 或 cp -r vedic-astro-skills/claude-code/skills/vedic-* /Users/$USER/mcc/.codex/skills/
+cp -r vedic-astro-skills/codex/skills/vedic-* ~/.codex/skills/
+```
 
-# 方式2：逐个安装（确保 6 个全装）
-# --path antigravity/skills/vedic-reader \
-# --path antigravity/skills/vedic-calculator \   ← 不要漏掉！
-# --path antigravity/skills/vedic-core \
-# --path antigravity/skills/vedic-career \
-# --path antigravity/skills/vedic-love \
-# --path antigravity/skills/vedic-rectifier
+</details>
+
+<details>
+<summary><b>Claude Code</b></summary>
+
+```bash
+git clone https://github.com/CNWU16/vedic-astro-skills.git
+cp -r vedic-astro-skills/claude-code/skills/vedic-* ~/.claude/skills/
 ```
 
 </details>
@@ -328,7 +328,8 @@ vedic-astro-skills/
 │       ├── resources/
 │       └── scripts/
 │           └── time_scan.py         # Lagna/D9 扫描器
-└── claude-code/skills/              # Claude Code 版本 (同上)
+├── claude-code/skills/              # Claude Code 版本 (同上)
+└── codex/skills/                    # Codex 原生版本（含 agents/openai.yaml）
 ```
 
 ---
