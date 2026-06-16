@@ -1,23 +1,24 @@
 """
-Vedic Report Builder — Universal MD → HTML Pipeline
-=====================================================
-Supports ALL Vedic skill outputs: Core, Career, Love, Q&A
+Vedic Report Builder — Universal MD → HTML Pipeline (v2)
+=========================================================
+Auto-detects open-source (vedic-core) vs Pro (vedic-core-pro) output files.
+Dynamically numbers sections — no hardcoded "Part II" when Part I is missing.
 
 Usage:
   python report_builder.py <folder> [--name "Name"] [--lagna "Cancer"] [--lang cn]
 
-The script auto-detects which MD files exist and builds accordingly.
-It checks both the folder itself and a 'parts/' subfolder.
-
-Supported file patterns:
-  Core:    p2a_planets.md, p2b_planets.md, p2c_planets.md,
-           p3_divisional.md, p4_houses.md, p5a_life.md, p5b_life.md,
-           appendix.md
-  Career:  career_part1.md, career_part2.md, career_part3.md
-           OR 02_career.md, career_phase*.md, career.md
-  Love:    love_part1.md, love_part2.md
-           OR 03_love.md, love.md
-  Q&A:     qa_*.md (any file starting with qa_)
+Auto-detected file patterns:
+  Identity:     p0_identity.md (Pro only)
+  Planets:      p2a_planets.md ~ p2d_planets.md
+  Divisional:   p3a_d9.md, p3b_divisional.md, p3c_yogas.md
+  Houses:       p4a_houses.md, p4b_houses.md
+  Prediction:   p5_prediction.md, p5c_topics.md (Pro only)
+  Life:         p5a_life.md / p6a_life.md, p5b_life.md / p6b_life.md
+  Blueprint:    p6c_blueprint.md (Pro only)
+  Appendix:     appendix.md, rectification_report.md
+  Career:       career_part1~3.md
+  Love:         love_part1~2.md
+  Q&A:          qa_*.md
 
 Requirements:  pip install markdown
 """
@@ -205,126 +206,205 @@ hr { border: none; border-top: 1px dashed var(--border-light); margin: 24px 0; }
 }
 """
 
-# ── Section definitions ──
-# Each entry: (priority, canonical_key, en_title, cn_title, filename_patterns)
+# ── Section Registry ──
+# Format: (priority, key, group, sub, cn_title, en_title, patterns)
+#
+# group: sections sharing the same group get the same "第X部分" number.
+#   - "GN" groups → numbered as "第一部分", "第二部分"... dynamically
+#   - "appendix" → titled "附录：XXX"
+# sub: sub-label within group ("A"/"B"/"C"/"D"/"" for none)
+#   - "cont" means continuation, shown as "（续）"
+#
+# Numbering is computed at build time based on which groups actually have files.
+# This means: if p0_identity.md doesn't exist, planets become "第一部分" automatically.
+
 SECTION_REGISTRY = [
-    (10, "core",      "Part I: Core Audit",                    "第一部分：核心审计",
-     ["01_core.md", "p1_data.md", "p1_basics.md", "core.md"]),
-    (15, "planets_a", "Part II-A: Planets (Sun/Moon/Mars)",    "第二部分A：行星审计 (日/月/火)",
+    # ── Identity / Overview ──
+    # Pro: p0_identity.md (身份定锚)
+    # Open source: p1_overview.md (身份概览)
+    (5,  "identity",    "G0", "",     "身份概览",                      "Identity Overview",
+     ["p0_identity.md", "p1_overview.md"]),
+
+    # ── Planets ──
+    (15, "planets_a",   "G1", "A",   "行星审计（日/月）",              "Planets (Sun/Moon)",
      ["p2a_planets.md"]),
-    (17, "planets_b", "Part II-B: Planets (Me/Ju/Ve)",         "第二部分B：行星审计 (水/木/金)",
+    (17, "planets_b",   "G1", "B",   "行星审计（火/水）",              "Planets (Mars/Mercury)",
      ["p2b_planets.md"]),
-    (19, "planets_c", "Part II-C: Planets (Sa/Ra/Ke)",         "第二部分C：行星审计 (土/罗/计)",
+    (19, "planets_c",   "G1", "C",   "行星审计（木/金）",              "Planets (Jupiter/Venus)",
      ["p2c_planets.md"]),
-    (19, "planets_d", "Part II-D: Planets (Summary)",           "第二部分D：行星审计 (总结)",
+    (21, "planets_d",   "G1", "D",   "行星审计（土/罗/计 + 总结）",    "Planets (Sa/Ra/Ke + Summary)",
      ["p2d_planets.md"]),
-    (20, "planets",   "Part II: Planetary Audit (P1-P12)",     "第二部分：行星审计 (P1-P12)",
+    (23, "planets",     "G1", "",    "行星审计（P1-P12）",             "Planetary Audit (P1-P12)",
      ["02_planets.md", "p2_planets.md", "planets.md"]),
-    (28, "d9",        "Part III-A: D9 Navamsha Analysis",       "第三部分A：D9盘分析",
+
+    # ── Divisional / D9 / Yogas ──
+    (28, "d9",          "G2", "A",   "D9盘深度审计",                   "D9 Navamsha Analysis",
      ["p3a_d9.md"]),
-    (30, "divisional","Part III-B: Divisional Cross-Analysis",  "第三部分B：分盘交叉分析",
-     ["p3b_divisional.md", "p3_divisional.md", "03_d9.md", "p3_d9.md", "d9.md"]),
-    (38, "houses_a",  "Part IV-A: House Diagnostics (1-6)",     "第四部分A：宫位诊断 (1-6宫)",
+    (30, "divisional",  "G2", "B",   "分盘交叉分析",                   "Divisional Cross-Analysis",
+     ["p3b_divisional.md", "p3_divisional.md", "03_d9.md"]),
+    (32, "yogas",       "G2", "C",   "格局审计",                       "Yoga Audit",
+     ["p3c_yogas.md"]),
+
+    # ── Houses ──
+    (38, "houses_a",    "G3", "A",   "宫位诊断（1-6宫）",             "House Diagnostics (1-6)",
      ["p4a_houses.md"]),
-    (40, "houses",    "Part IV-B: House Diagnostics (7-12)",    "第四部分B：宫位诊断 (7-12宫)",
-     ["p4b_houses.md", "04_houses.md", "p4_houses.md", "houses.md"]),
-    (50, "life",      "Part V: Life Architecture",             "第五部分：人生架构总结",
-     ["05_life.md", "p5a_life.md", "p5_life.md", "life.md"]),
-    (55, "life2",     "Part V (cont.): Life Architecture",     "第五部分（续）：人生架构总结",
-     ["05b_life.md", "p5b_life.md", "life2.md"]),
-    (57, "appendix",  "Technical Appendix",                    "技术附录",
+    (40, "houses_b",    "G3", "B",   "宫位诊断（7-12宫）",            "House Diagnostics (7-12)",
+     ["p4b_houses.md"]),
+    (42, "houses",      "G3", "",    "宫位诊断",                       "House Diagnostics",
+     ["04_houses.md", "p4_houses.md", "houses.md"]),
+
+    # ── Prediction (Pro only) ──
+    (45, "prediction",  "G4", "",    "动态预测",                       "Dynamic Prediction",
+     ["p5_prediction.md"]),
+    (47, "topics",      "G4", "B",   "专题交叉审计",                   "Cross-Topic Audit",
+     ["p5c_topics.md"]),
+
+    # ── Life Architecture / Ten Themes ──
+    (50, "life",        "G5", "",    "人生架构总结",                    "Life Architecture",
+     ["p5a_life.md", "p6a_life.md", "05_life.md", "p5_life.md", "life.md"]),
+    (55, "life2",       "G5", "cont","人生架构总结",                    "Life Architecture",
+     ["p5b_life.md", "p6b_life.md", "05b_life.md", "life2.md"]),
+    (57, "blueprint",   "G5", "",    "生命蓝图",                       "Life Blueprint",
+     ["p6c_blueprint.md"]),
+
+    # ── Appendix ──
+    (58, "appendix",    "appendix", "",  "技术附录",                   "Technical Appendix",
      ["appendix.md"]),
-    # Career
-    (60, "career1",   "Part VI: Career — Portrait & Narrative","第六部分：事业 — 画像与叙事",
-     ["career_part1.md", "career_phase1_2.md"]),
-    (65, "career2",   "Part VI (cont.): Career — Strategy",    "第六部分（续）：事业 — 战略决策",
+    (59, "rectify",     "appendix", "",  "时间校准报告",               "Birth Time Rectification",
+     ["rectification_report.md"]),
+
+    # ── Career ──
+    # SKILL outputs: career_phase12.md, career_phase3.md, career_phase4a/4b/4c.md
+    # Legacy names: career_part1/2/3.md, career_phase1_2.md
+    (60, "career1",     "G6", "",    "事业 — 画像与叙事",             "Career — Portrait & Narrative",
+     ["career_part1.md", "career_phase12.md", "career_phase1_2.md"]),
+    (65, "career2",     "G6", "cont","事业 — 战略决策",               "Career — Strategy",
      ["career_part2.md", "career_phase3.md"]),
-    (68, "career3",   "Part VI (cont.): Career — Risk & Advice","第六部分（续）：事业 — 风险与箴言",
-     ["career_part3.md", "career_phase4.md"]),
-    (70, "career",    "Part VI: Career Architecture",           "第六部分：事业架构",
+    (67, "career3a",    "G6", "cont","事业 — 画像与叙事（精密合成）",  "Career — Precision Synthesis",
+     ["career_phase4a.md"]),
+    (68, "career3b",    "G6", "cont","事业 — 战略决策（终局）",       "Career — Final Strategy",
+     ["career_part3.md", "career_phase4b.md", "career_phase4.md"]),
+    (69, "career3c",    "G6", "cont","事业 — 风险与箴言",             "Career — Risk & Advice",
+     ["career_phase4c.md"]),
+    (70, "career",      "G6", "",    "事业架构",                       "Career Architecture",
      ["02_career.md", "06_career.md", "career.md"]),
-    # Love
-    (80, "love1",     "Part VII: Love — System & Timeline",     "第七部分：感情 — 体质报告与时间轴",
-     ["love_part1.md"]),
-    (85, "love2",     "Part VII (cont.): Love — Advice & Risk", "第七部分（续）：感情 — 建议与风险",
-     ["love_part2.md"]),
-    (90, "love",      "Part VII: Love & Marriage",              "第七部分：感情与婚姻",
+
+    # ── Love ──
+    # SKILL outputs: love_step1.md, love_step2.md, love_step3.md
+    # Legacy names: love_part1/2.md
+    (80, "love1",       "G7", "",    "感情 — 体质报告与配偶画像",     "Love — Pattern & Partner Profile",
+     ["love_part1.md", "love_step1.md"]),
+    (85, "love2",       "G7", "cont","感情 — 时间窗口",               "Love — Timing Windows",
+     ["love_step2.md"]),
+    (88, "love3",       "G7", "cont","感情 — 建议与风险",             "Love — Advice & Risk",
+     ["love_part2.md", "love_step3.md"]),
+    (90, "love",        "G7", "",    "感情与婚姻",                     "Love & Marriage",
      ["03_love.md", "07_love.md", "love.md"]),
-    # Q&A
-    (100, "qa",       "Appendix: Q&A",                          "附录：追问答疑",
-     []),  # handled separately via glob
+
+    # ── Q&A (handled separately via glob) ──
+    (100, "qa",         "appendix", "",  "追问答疑",                   "Q&A",
+     []),
 ]
 
 
-def find_files(folder):
-    """Auto-detect MD files using flexible naming.
-    
-    Strategy:
-      1. Try exact matches from SECTION_REGISTRY
-      2. Dynamic scan: find any p*_*.md not yet matched, group by prefix
-      3. Glob for qa_*.md
-    """
-    found = {}  # canonical_key -> (priority, en_title, cn_title, content)
-    matched_files = set()  # track which files are already matched
+# ── Part numbering ──
 
-    # Pass 1: exact matches from registry
-    for priority, key, en_title, cn_title, patterns in SECTION_REGISTRY:
+CN_NUMS = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
+           "十一", "十二", "十三", "十四", "十五"]
+
+def cn_part_label(n):
+    """第一部分, 第二部分, ..."""
+    return f"第{CN_NUMS[n-1]}部分" if 1 <= n <= len(CN_NUMS) else f"第{n}部分"
+
+EN_ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+            "XI", "XII", "XIII", "XIV", "XV"]
+
+def en_part_label(n):
+    """Part I, Part II, ..."""
+    return f"Part {EN_ROMAN[n-1]}" if 1 <= n <= len(EN_ROMAN) else f"Part {n}"
+
+
+def make_section_title(group, sub, base_title, part_num, lang):
+    """Generate the display title for a section.
+
+    Examples (cn):
+      G1/A → "第一部分A：行星审计（日/月）"
+      G1/cont → "第一部分（续）：行星审计"
+      appendix → "附录：技术附录"
+    """
+    if group == "appendix":
+        prefix = "附录" if lang == "cn" else "Appendix"
+        return f"{prefix}：{base_title}" if lang == "cn" else f"{prefix}: {base_title}"
+
+    label = cn_part_label(part_num) if lang == "cn" else en_part_label(part_num)
+
+    if sub == "cont":
+        suffix = "（续）" if lang == "cn" else " (cont.)"
+        sep = "：" if lang == "cn" else ": "
+        return f"{label}{suffix}{sep}{base_title}"
+    elif sub:
+        sep = "：" if lang == "cn" else ": "
+        return f"{label}{sub}{sep}{base_title}"
+    else:
+        sep = "：" if lang == "cn" else ": "
+        return f"{label}{sep}{base_title}"
+
+
+# ── File discovery ──
+
+def find_files(folder):
+    """Auto-detect MD files. Returns dict: key -> (priority, group, sub, cn_title, en_title, content)"""
+    found = {}
+    matched_files = set()
+
+    # Pass 1: explicit pattern matches from registry
+    for priority, key, group, sub, cn_title, en_title, patterns in SECTION_REGISTRY:
         if not patterns:
             continue
         for pat in patterns:
             path = os.path.join(folder, pat)
             if os.path.exists(path):
                 with open(path, "r", encoding="utf-8") as f:
-                    found[key] = (priority, en_title, cn_title, f.read())
+                    found[key] = (priority, group, sub, cn_title, en_title, f.read())
                 matched_files.add(pat)
-                print(f"  + {pat} -> {key}")
+                print(f"  ✓ {pat} → {key}")
                 break
 
     # Pass 2: dynamic scan for p*_*.md files not yet matched
-    # Groups: p1->core, p2->planets, p3->divisional, p4->houses, p5->life
     PREFIX_MAP = {
-        "p2": (20, "planets",    "Part II: Planetary Audit",      "第二部分：行星审计"),
-        "p3": (30, "divisional", "Part III: Divisional Analysis",  "第三部分：分盘分析"),
-        "p4": (40, "houses",     "Part IV: House Diagnostics",     "第四部分：宫位诊断"),
-        "p5": (50, "life",       "Part V: Life Architecture",      "第五部分：人生架构总结"),
+        "p0": ("G0", "身份定锚",         "Identity"),
+        "p2": ("G1", "行星审计",          "Planetary Audit"),
+        "p3": ("G2", "分盘分析",          "Divisional Analysis"),
+        "p4": ("G3", "宫位诊断",          "House Diagnostics"),
+        "p5": ("G5", "人生架构总结",      "Life Architecture"),
+        "p6": ("G5", "人生架构总结",      "Life Architecture"),
     }
-    prefix_files = {}  # prefix -> [(filename, content), ...]
-    
+
     all_md = sorted(glob.glob(os.path.join(folder, "p*_*.md")))
     for path in all_md:
         fname = os.path.basename(path)
         if fname in matched_files:
             continue
-        # Extract prefix: p2a_xxx.md -> "p2", p3b_yyy.md -> "p3"
         m = re.match(r"(p\d)", fname)
-        if m:
-            prefix = m.group(1)
-            if prefix in PREFIX_MAP:
-                if prefix not in prefix_files:
-                    prefix_files[prefix] = []
-                with open(path, "r", encoding="utf-8") as f:
-                    prefix_files[prefix].append((fname, f.read()))
-    
-    # Merge prefix groups into found (combine multiple files of same prefix)
-    for prefix, files in prefix_files.items():
-        priority, base_key, en_title, cn_title = PREFIX_MAP[prefix]
-        if len(files) == 1:
-            fname, content = files[0]
-            suffix = re.match(r"p\d(\w?)_", fname)
-            key = f"{base_key}_{suffix.group(1)}" if suffix and suffix.group(1) else base_key
-            if key not in found:
-                sub_label = f" ({suffix.group(1).upper()})" if suffix and suffix.group(1) else ""
-                found[key] = (priority, en_title + sub_label, cn_title + sub_label, content)
-                print(f"  + {fname} -> {key} (dynamic)")
-        else:
-            for i, (fname, content) in enumerate(files):
-                suffix = re.match(r"p\d(\w?)_", fname)
-                sub = suffix.group(1).upper() if suffix and suffix.group(1) else chr(65 + i)
-                key = f"{base_key}_{sub.lower()}"
-                sub_priority = priority + i
-                if key not in found:
-                    found[key] = (sub_priority, f"{en_title} ({sub})", f"{cn_title} ({sub})", content)
-                    print(f"  + {fname} -> {key} (dynamic)")
+        if not m:
+            continue
+        prefix = m.group(1)
+        if prefix not in PREFIX_MAP:
+            continue
+        group, cn_base, en_base = PREFIX_MAP[prefix]
+        # Extract sub-label: p2a → "A", p3c → "C"
+        sub_m = re.match(r"p\d(\w?)_", fname)
+        sub = sub_m.group(1).upper() if sub_m and sub_m.group(1) else ""
+        key = f"dynamic_{fname}"
+        # Compute priority: p2=20, p3=30, etc + sub offset
+        base_pri = int(prefix[1]) * 10
+        sub_offset = ord(sub) - 64 if sub else 0  # A=1, B=2...
+        priority = base_pri + sub_offset
+
+        with open(path, "r", encoding="utf-8") as f:
+            sub_label = f"（{sub}）" if sub else ""
+            found[key] = (priority, group, sub, f"{cn_base}{sub_label}", f"{en_base} ({sub})" if sub else en_base, f.read())
+        print(f"  ✓ {fname} → {key} (dynamic)")
 
     # Pass 3: Q&A glob
     qa_files = sorted(glob.glob(os.path.join(folder, "qa_*.md")))
@@ -333,29 +413,38 @@ def find_files(folder):
         for qf in qa_files:
             with open(qf, "r", encoding="utf-8") as f:
                 combined.append(f"<!-- {os.path.basename(qf)} -->\n{f.read()}")
-            print(f"  + {os.path.basename(qf)} -> qa")
-        found["qa"] = (100, "Appendix: Q&A", "附录：追问答疑", "\n\n---\n\n".join(combined))
+            print(f"  ✓ {os.path.basename(qf)} → qa")
+        found["qa"] = (100, "appendix", "", "追问答疑", "Q&A", "\n\n---\n\n".join(combined))
 
     return found
 
 
-
 def detect_package(found, lang="cn"):
-    has_core = any(k in found for k in ["core", "planets", "planets_a", "d9", "houses", "houses_a", "life"])
-    has_career = any(k in found for k in ["career", "career1", "career2", "career3"])
-    has_love = any(k in found for k in ["love", "love1", "love2"])
+    """Detect which skill packages are present."""
+    has_core = any(v[1].startswith("G") for v in found.values() if v[1] in ("G0","G1","G2","G3","G4","G5"))
+    has_career = any(v[1] == "G6" for v in found.values())
+    has_love = any(v[1] == "G7" for v in found.values())
     has_qa = "qa" in found
+    has_rectify = "rectify" in found
+
+    # Detect version
+    is_pro = "identity" in found or "prediction" in found or "yogas" in found
+    version = "Pro" if is_pro else "开源版" if lang == "cn" else "Open Source"
 
     parts = []
-    if has_core:    parts.append("Core" if lang == "en" else "核心")
-    if has_career:  parts.append("Career" if lang == "en" else "事业")
-    if has_love:    parts.append("Love" if lang == "en" else "感情")
-    if has_qa:      parts.append("Q&A" if lang == "en" else "答疑")
+    if has_core:    parts.append("核心" if lang == "cn" else "Core")
+    if has_career:  parts.append("事业" if lang == "cn" else "Career")
+    if has_love:    parts.append("感情" if lang == "cn" else "Love")
+    if has_rectify: parts.append("校准" if lang == "cn" else "Rectification")
+    if has_qa:      parts.append("答疑" if lang == "cn" else "Q&A")
 
+    pkg = " + ".join(parts)
     if lang == "cn":
-        return " + ".join(parts), " + ".join(parts) + " 完整报告"
-    return " + ".join(parts), " + ".join(parts) + " Complete Reading"
+        return pkg, f"{version} | {pkg} 完整报告", version
+    return pkg, f"{version} | {pkg} Complete Reading", version
 
+
+# ── HTML builders ──
 
 def build_cover(name, lagna, gender, status, pkg, desc, lang="cn"):
     top = "DATA-DRIVEN VEDIC ASTROLOGY" if lang == "en" else "数据驱动吠陀占星"
@@ -388,8 +477,7 @@ def build_cover(name, lagna, gender, status, pkg, desc, lang="cn"):
 def build_toc(sections, lang="cn"):
     toc_title = "目录" if lang == "cn" else "Table of Contents"
     items = []
-    for _, _, en_title, cn_title, _ in sections:
-        title = cn_title if lang == "cn" else en_title
+    for title, _ in sections:
         items.append(f'<li class="toc-part">{title}</li>')
     return f'<div class="toc"><h2>{toc_title}</h2><ul class="toc-list">{"".join(items)}</ul></div>'
 
@@ -399,7 +487,6 @@ def _fix_table_spacing(text):
     lines = text.split('\n')
     fixed = []
     for i, line in enumerate(lines):
-        # 如果当前行像表格行（以|开头），且上一行非空且不是表格行，补空行
         if line.strip().startswith('|') and i > 0 and fixed and fixed[-1].strip() and not fixed[-1].strip().startswith('|'):
             fixed.append('')
         fixed.append(line)
@@ -419,9 +506,11 @@ def build_section(num, title, md_text):
 </div>"""
 
 
+# ── Main ──
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Vedic Astrology Report Builder — MD → HTML",
+        description="Vedic Astrology Report Builder — MD → HTML (v2, auto-detect version)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -436,7 +525,7 @@ Examples:
     parser.add_argument("--lang", default="cn", choices=["cn", "en"], help="Language (default: cn)")
     parser.add_argument("--output", default=None, help="Output HTML path")
     parser.add_argument("--include", default=None,
-                        help="Comma-separated sections to include: core,career,love,qa (default: all)")
+                        help="Comma-separated sections to include: core,career,love,qa,rectify (default: all)")
     args = parser.parse_args()
 
     folder = args.folder.rstrip("/\\")
@@ -453,50 +542,70 @@ Examples:
 
     if not found:
         print(f"\nError: No MD files found in {search_dir}")
-        print("  Expected files like: p1_basics.md, career_part1.md, love_part1.md, qa_*.md")
         sys.exit(1)
 
-    # --include 过滤：只保留指定部分
+    # --include filter
     if args.include:
         include_set = set(args.include.lower().split(","))
-        # 定义 section key → group 映射
         group_map = {
-            "core": {"core", "basics", "planets", "planets_a", "planets_b", "planets_c", "planets_d",
-                     "d9", "divisional", "divisional_a", "houses", "houses_a", "houses_b", "life", "life2", "appendix"},
-            "career": {"career", "career1", "career2", "career3"},
-            "love": {"love", "love1", "love2"},
-            "qa": {"qa"},
+            "core":    {"G0", "G1", "G2", "G3", "G4", "G5"},
+            "career":  {"G6"},
+            "love":    {"G7"},
+            "rectify": set(),  # handled by key name
+            "qa":      set(),  # handled by key name
         }
+        allowed_groups = set()
         allowed_keys = set()
-        for group_name in include_set:
-            if group_name.strip() in group_map:
-                allowed_keys |= group_map[group_name.strip()]
-        if allowed_keys:
-            found = {k: v for k, v in found.items() if k in allowed_keys}
-            print(f"  Filter: --include {args.include} → {len(found)} sections")
+        for g in include_set:
+            g = g.strip()
+            if g in group_map:
+                allowed_groups |= group_map[g]
+            if g == "rectify":
+                allowed_keys.add("rectify")
+            if g == "qa":
+                allowed_keys.add("qa")
+        # Always include appendix if core is included
+        if "core" in include_set:
+            allowed_groups.add("appendix")
+        found = {k: v for k, v in found.items()
+                 if v[1] in allowed_groups or k in allowed_keys}
+        print(f"  Filter: --include {args.include} → {len(found)} sections")
 
     lang = args.lang
-    pkg, desc = detect_package(found, lang)
-    print(f"\n  Package: {pkg} | Language: {lang}")
+    pkg, desc, version = detect_package(found, lang)
+    print(f"\n  Version: {version}")
+    print(f"  Package: {pkg} | Language: {lang}")
 
     # Sort sections by priority
-    ordered = []
+    ordered_items = sorted(found.items(), key=lambda x: x[1][0])
+
+    # Assign dynamic part numbers based on groups
+    group_to_part = {}  # group_id -> part_number
+    next_part = 1
+    for key, (priority, group, sub, cn_title, en_title, content) in ordered_items:
+        if group == "appendix":
+            continue  # appendix doesn't get a part number
+        if group not in group_to_part:
+            group_to_part[group] = next_part
+            next_part += 1
+
+    # Build ordered sections with titles
+    sections = []  # [(display_title, html_content)]
     sec_num = 1
-    for priority, key, en_title, cn_title, _ in SECTION_REGISTRY:
-        if key in found:
-            p, et, ct, content = found[key]
-            title = ct if lang == "cn" else et
-            ordered.append((sec_num, key, en_title, cn_title, content))
-            sec_num += 1
+    for key, (priority, group, sub, cn_title, en_title, content) in ordered_items:
+        base = cn_title if lang == "cn" else en_title
+        part_num = group_to_part.get(group, 0)
+        title = make_section_title(group, sub, base, part_num, lang)
+        sections.append((title, content))
+        sec_num += 1
 
     # Build HTML
     cover = build_cover(args.name, args.lagna, args.gender, args.status, pkg, desc, lang)
-    toc = build_toc(ordered, lang)
+    toc = build_toc(sections, lang)
 
     sections_html = []
-    for num, key, en_title, cn_title, content in ordered:
-        title = cn_title if lang == "cn" else en_title
-        num_str = f"{num:02d}"
+    for i, (title, content) in enumerate(sections, 1):
+        num_str = f"{i:02d}"
         sections_html.append(build_section(num_str, title, content))
 
     footer_cn = """<div class="footer-note">
@@ -524,6 +633,9 @@ Examples:
     size = os.path.getsize(out) / 1024
     print(f"\n  [OK] Output: {out} ({size:.0f} KB)")
     print(f"  -> Open in browser -> Ctrl+P -> Save as PDF")
+    print(f"\n  Sections: {len(sections)}")
+    for title, _ in sections:
+        print(f"    • {title}")
 
 
 if __name__ == "__main__":
