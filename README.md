@@ -6,7 +6,7 @@
   <p align="center">
     <img src="https://img.shields.io/badge/version-v7.0-blue" alt="Version">
     <img src="https://img.shields.io/badge/python-3.8~3.13-green" alt="Python">
-    <img src="https://img.shields.io/badge/license-MIT-orange" alt="License">
+    <img src="https://img.shields.io/badge/license-AGPL--3.0-orange" alt="License">
     <img src="https://img.shields.io/badge/skills-7-purple" alt="Skills">
   </p>
 </p>
@@ -412,4 +412,11 @@ If this project helps you, consider buying me a coffee:
 
 ## License
 
-MIT
+**代码**: [AGPL-3.0](LICENSE) — 你可以自由使用、修改、学习。如果你基于本项目提供网络服务（SaaS），需要开源你的完整服务端代码。
+
+**指令文件** (SKILL.md / prompt 模板 / resources): 附加商用限制 — 个人使用无限制；未经授权不得用于商业服务。详见 [COMMERCIAL_NOTICE](COMMERCIAL_NOTICE)。
+
+简单说：**个人用随便用，拿去卖钱的请先联系我。**
+
+Code: AGPL-3.0 — free to use, modify, study. Network services must open-source their full server code.
+Prompt files: additional commercial restriction — personal use unlimited; commercial use requires written permission. See [COMMERCIAL_NOTICE](COMMERCIAL_NOTICE).
