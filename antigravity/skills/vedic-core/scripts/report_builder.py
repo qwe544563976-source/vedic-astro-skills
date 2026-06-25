@@ -419,7 +419,7 @@ def find_files(folder):
     return found
 
 
-def detect_package(found, lang="cn"):
+def detect_package(found, lang="cn", brand=None):
     """Detect which skill packages are present."""
     has_core = any(v[1].startswith("G") for v in found.values() if v[1] in ("G0","G1","G2","G3","G4","G5"))
     has_career = any(v[1] == "G6" for v in found.values())
@@ -427,8 +427,13 @@ def detect_package(found, lang="cn"):
     has_qa = "qa" in found
     has_rectify = "rectify" in found
 
-    # Detect version
-    is_pro = "identity" in found or "prediction" in found or "yogas" in found
+    # Detect version: --brand flag overrides auto-detect
+    if brand == "pro":
+        is_pro = True
+    elif brand == "open":
+        is_pro = False
+    else:
+        is_pro = "identity" in found or "prediction" in found
     version = "Pro" if is_pro else "开源版" if lang == "cn" else "Open Source"
 
     parts = []
@@ -526,6 +531,8 @@ Examples:
     parser.add_argument("--output", default=None, help="Output HTML path")
     parser.add_argument("--include", default=None,
                         help="Comma-separated sections to include: core,career,love,qa,rectify (default: all)")
+    parser.add_argument("--brand", default=None, choices=["pro", "open"],
+                        help="Force brand: 'pro' or 'open' (default: auto-detect)")
     args = parser.parse_args()
 
     folder = args.folder.rstrip("/\\")
@@ -572,7 +579,7 @@ Examples:
         print(f"  Filter: --include {args.include} → {len(found)} sections")
 
     lang = args.lang
-    pkg, desc, version = detect_package(found, lang)
+    pkg, desc, version = detect_package(found, lang, brand=args.brand)
     print(f"\n  Version: {version}")
     print(f"  Package: {pkg} | Language: {lang}")
 
