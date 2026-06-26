@@ -81,7 +81,7 @@ if _missing:
     raise ImportError(f"vedic-calculator 核心模块缺失: {', '.join(_missing)}. 请运行 setup_env.py")
 
 # === 配置 ===
-swe.set_sid_mode(swe.SIDM_LAHIRI)
+swe.set_sid_mode(swe.SIDM_TRUE_CITRA)
 
 SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
          'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
@@ -393,7 +393,7 @@ def calc_transits(lagna_sign_idx, moon_sign_idx):
     """
     now = datetime.now()
     jd_now = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60)
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    swe.set_sid_mode(swe.SIDM_TRUE_CITRA)
     flags = swe.FLG_SIDEREAL | swe.FLG_SPEED
     
     transits = {}
@@ -707,7 +707,7 @@ if __name__ == '__main__':
     # Gandhi: 1869-10-02, 07:12, Porbandar
     chart = calculate_full_chart(1869, 10, 2, 7, 12, 21.6417, 69.6293, "Asia/Kolkata")
     
-    print(f"Ayanamsa (Lahiri): {chart['ayanamsa']:.4f}°")
+    print(f"Ayanamsa (True Chitra): {chart['ayanamsa']:.4f}°")
     print(f"Lagna: {chart['lagna']['sign']} {chart['lagna']['deg_str']}")
     
     print(f"\n--- Planets ---")

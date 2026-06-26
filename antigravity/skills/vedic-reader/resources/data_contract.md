@@ -33,7 +33,7 @@
 有效精度: [±分钟级 / ±5分钟 / ±15分钟 / ±1小时 / 不确定]（经来源修正后）
 验证轨道: [轨道1-标准 / 轨道2-严格 / 轨道3-双Lagna]
 读盘方式: [calc engine / JH表格 / 文本度数 / 视觉识别+用户确认]
-Ayanamsa: [Lahiri / 其他]
+Ayanamsa: [True Chitra / 其他]
 Node模式: [Mean Node / True Node]
 ```
 

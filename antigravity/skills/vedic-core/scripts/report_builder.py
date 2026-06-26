@@ -472,7 +472,7 @@ def build_cover(name, lagna, gender, status, pkg, desc, lang="cn"):
     <div><dt>{L[2]}</dt><dd>{gender} | {status}</dd></div>
     <div><dt>{L[3]}</dt><dd>{pkg}</dd></div>
     <div><dt>{L[4]}</dt><dd>Parashari Jyotish | KN Rao School</dd></div>
-    <div><dt>{L[5]}</dt><dd>Jagannatha Hora v8.0 | Lahiri Ayanamsha</dd></div>
+    <div><dt>{L[5]}</dt><dd>Jagannatha Hora v8.0 | True Chitrapaksha (Lahiri系, 差<1′)</dd></div>
     <div><dt>{L[6]}</dt><dd>Vimsottari (Mahadasha + Antardasha)</dd></div>
     <div><dt>{L[7]}</dt><dd>Shadbala, Ashtakavarga (SAV/BAV), D9 Navamsha</dd></div>
   </div></div>

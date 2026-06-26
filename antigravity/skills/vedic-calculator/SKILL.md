@@ -208,7 +208,7 @@ structured_data.md 生成后，向用户输出：
 ```python
 chart = {
     # 基础天文
-    'ayanamsa': 23.8982,           # float, Lahiri ayanamsa 度数
+    'ayanamsa': 23.8982,           # float, True Chitra ayanamsa 度数（约23.9°，与Lahiri差<1′）
     'lagna': {
         'sign': 'Cancer',          # str, 英文星座名
         'sign_idx': 3,             # int, 0-indexed (Aries=0)
@@ -317,7 +317,7 @@ chart = {
 
 ## 技术规格
 
-- Ayanamsa: **TRUE_CITRA / Lahiri**（固定，不可更改）
+- Ayanamsa: **True Chitrapaksha (TRUE_CITRA)**（固定，不可更改；属Lahiri系，差<1′）
 - Node模式: **Mean Node**
 - 天文核心: pysweph (Swiss Ephemeris C binding)
 - SAV/BAV: **PyJHora 原生** (ashtakavarga_pyjhora.py)
