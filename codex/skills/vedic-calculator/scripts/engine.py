@@ -122,9 +122,23 @@ HOUSE_DOMAINS = {
 
 # === 核心计算函数 ===
 
+def _localize_strict(tz, dt):
+    """DST-safe localize：出生时间落在夏令时切换时段时不静默猜（错1小时=上升/Dasha全错），明确报错。"""
+    try:
+        return tz.localize(dt, is_dst=None)
+    except pytz.exceptions.AmbiguousTimeError:
+        raise ValueError(
+            f"出生时间 {dt} 落在夏令时结束的重复时段（当地钟表回拨，该时刻出现过两次）。"
+            "请确认出生记录用的是夏令时还是标准时间的钟表时间，无法确认时建议用 rectifier 校准。")
+    except pytz.exceptions.NonExistentTimeError:
+        raise ValueError(
+            f"出生时间 {dt} 落在夏令时开始的跳过时段（当地钟表拨快，该时刻不存在）。"
+            "出生记录可能用的是标准时间——请核实后换算，或用 rectifier 校准。")
+
+
 def to_jd(year, month, day, hour, minute, tz_str):
     tz = pytz.timezone(tz_str)
-    local_dt = tz.localize(datetime(year, month, day, hour, minute))
+    local_dt = _localize_strict(tz, datetime(year, month, day, hour, minute))
     utc_dt = local_dt.astimezone(pytz.utc)
     ut_hour = utc_dt.hour + utc_dt.minute/60.0 + utc_dt.second/3600.0
     return swe.julday(utc_dt.year, utc_dt.month, utc_dt.day, ut_hour)
@@ -494,7 +508,7 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
     
     # 4. SAV/BAV (PyJHora — no fallback)
     tz = pytz.timezone(tz_str)
-    _tz_dt = tz.localize(datetime(year, month, day, hour, minute))
+    _tz_dt = _localize_strict(tz, datetime(year, month, day, hour, minute))
     _tz_offset = _tz_dt.utcoffset().total_seconds() / 3600.0
     ashtak = _av_pyjhora(year, month, day, hour, minute, lat, lon, _tz_offset)
     
@@ -662,7 +676,7 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
     if any([_bhava_bala_pyjhora, _special_lagnas_pyjhora, _vargeeya_bala_pyjhora]):
         try:
             tz = pytz.timezone(tz_str)
-            _tz_dt = tz.localize(datetime(year, month, day, hour, minute))
+            _tz_dt = _localize_strict(tz, datetime(year, month, day, hour, minute))
             _tz_offset = _tz_dt.utcoffset().total_seconds() / 3600.0
             if _bhava_bala_pyjhora:
                 bhava_bala = _bhava_bala_pyjhora(year, month, day, hour, minute, lat, lon, _tz_offset)
