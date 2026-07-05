@@ -20,6 +20,7 @@ description: 吠陀占星合盘(Synastry)分析引擎。比较两个人的星盘
 2. 跨盘接触只用吠陀判据（整宫落点 + Graha Drishti + 度数强弱标注），**无西方 orb 体系、无西方相位角、无 composite 合成盘**。详见 resources/aspect-policy.md。
 3. 跨盘 DK 一律 **7K 主表**，不引入 8K/Rahu DK。
 4. 所有接触的解读语言：宫主身份(P1角色) + Karaka + 复合尊贵度 + SAV(极端值) + Dasha/double transit。
+   ⚠️ SAV读取铁规（唯一定义见 vedic-core/resources/house_framework.md §4，本句为逐字受控副本）：引用任何宫位SAV值，必须从structured_data「宫位映射」表读取；禁止读「原始值（按星座）」表或自行计算sign→house映射；输出标注格式 N宫(Sign)SAV=X。双盘补充：A/B 各按**自身盘**的宫位映射表读取，禁止跨盘借表。
 5. Ashtakoota 弱化为筛查层，不裁决（KN Rao 本人态度）。详见 resources/koota-policy.md。
 6. **分盘视角分离铁律（引用 D9/D10/D4/D5 等任何小分盘必守）**：
 
@@ -193,6 +194,10 @@ Layer 1+2 → 写入 reports/02_interaction_matrix.md
 仅在静态结构完成后运行。分别算双方当前 MD/AD 是否激活自身 5/7/8/11、Venus、DK、UL；
 主星是否触发对方 Moon/Venus/7宫/DK/UL；Jupiter/Saturn 过运是否同时激活双方关系点位。
 窗口必须分别显示 A 与 B 各自依据，不只给"共同窗口"。
+双方 MD/AD 时间窗口必须引用 vedic-core/resources/house_framework.md 的大运正负面判断
+规则执行正/负面条件判定，时间节点带括号标注推导依据；并守其「时间窗纪律」节
+（事件窗=MD×AD≤3年、大运级只作背景趋势；任一方 structured_data 无「Chara Dasha 时间线」节时
+❌禁凭通识心算 Chara、❌禁宣称"双系统共振/确认"）。
 → 写入 reports/03_timing.md
 
 ---
@@ -242,12 +247,13 @@ Layer 1+2 → 写入 reports/02_interaction_matrix.md
 ### 合盘 QA 铁规（与 core QA 的关键区别）
 
 1. **方向性**：A→B 与 B→A 是两套路径；同一事件（如吵架）A 与 B 的体验可能完全不同，**分别输出**，不合并。
-2. **时机看双方共振**：时间问题必须同时看双方 Dasha，不只看一方。
+2. **时机看双方共振**：时间问题必须同时看双方 Dasha，不只看一方；且每方 Dasha 须过 house_framework 正负面条件判定并带推导依据标注（同 Layer 3 口径）。
 3. **正反双审**：判断性问题同时列支持与制约，不只挑用户想听的。
 4. **反确认偏误**：基于盘面回答，用户描述只作校验、不作生成依据。
 5. **隐私**：不读任何一方 user_context.md。
 6. **分盘视角**：QA 追问一旦引用 D9/D10/D4/D5 等小分盘，同受上文「分盘视角分离铁律」约束——禁裸写"D9 7宫主/D10 10宫主"，必须双线显式标注（线A 分盘内部宫主 / 线B 本命宫主职落分盘宫），冲突分别呈现不折衷。
 7. **输出**：写入 `qa_<主题>.md`，聊天框只报 1–2 句结论 + 路径。
+8. **偏差反馈**：用户说"不像我们/时间不对"→ 先分诊偏差在哪一侧：A 侧多项不像 → 提示 A 出生时间可能有偏差、建议 vedic-rectifier 校准；B 侧多项不像 → B 时间未独立验证（见前置门控），走"B 升级路径"（另开目录跑 reader/core + rectifier）后重跑合盘；关系认知类偏差（双方数据都对但描述不符）→ 按正反双审重查证据链，不改盘。
 
 ---
 
