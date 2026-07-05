@@ -291,7 +291,7 @@ Phase 4 Part 3   → 写入 career_phase4c.md
        ✅ "2028-2031年是事业定型期（Mercury=L10, Shadbala 104%, 正面3/负面0→正面期）"
        ❌ "2028-2031年是事业定型期"（无推导依据）
      → 时间窗纪律（见 house_framework「时间窗纪律」节，一并执行）：事件性措辞必须落
-       MD×AD 叠加窗≤3年、大运级只写背景趋势期；Chara双系统交叉（无「Chara Dasha时间线」节
+       MD×AD 叠加窗≤3年、大运级只写背景趋势期；Chara双系统交叉（无「Chara Dasha 时间线」节
        ❌禁心算/禁称双系统确认）；回顾过去 Dasha 必须双向列正负面
 **STEP 5 现实听诊:** Combust/Sandhi/Retrograde/6-8凶星云集检查
 

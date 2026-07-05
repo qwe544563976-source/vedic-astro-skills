@@ -288,8 +288,9 @@ Lagna类型 → Badhaka宫：
   变动星座(Gemini/Virgo/Sagittarius/Pisces) → 7宫
 
 Badhakesh = Badhaka宫的宫主
-  → Badhakesh落入的宫位 = 容易遭遇"莫名障碍"的领域
+  → Badhakesh落入的宫位 = 容易遭遇"莫名障碍"的领域（障碍来源方向）
   → Badhakesh与特定宫位形成关联(合相/相位) → "好事多磨"
+  → Badhakesh 的 Dasha 期间 = 可能遇到结构性障碍的时段（时机维度）
 
 在宫位诊断报告中，标注Badhakesh影响的宫位事务。
 不过度渲染，仅作为"阻力来源标记"使用。
