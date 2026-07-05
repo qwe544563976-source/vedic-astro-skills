@@ -1,11 +1,11 @@
 {
- "source_commit": "4149593508bc",
- "generated_at": "2026-07-05T17:25:14Z",
+ "source_commit": "af3dbbb3f49b",
+ "generated_at": "2026-07-05T18:40:53Z",
  "repo": "vedic-astrology-skills",
  "anchor_count": 279,
  "section_count": 113,
  "file_hashes": {
-  "SKILL.md": "e8f7bd3f4437",
+  "SKILL.md": "aa339fbe1de6",
   "resources/p1_p12.md": "54381e36d769",
   "resources/yogas.md": "ddba85ac3968",
   "resources/house_framework.md": "a5a266b125fa",
@@ -640,7 +640,7 @@
    "file": "SKILL.md",
    "level": "L2",
    "title": "⚠️ 大运/小运星为 Rahu/Ketu 时：正面/负面/判定列改用 p1_p12「Dasha速查表节点专用正负面条件子表」（house_framework 六",
-   "text": "**⚠️ 大运/小运星为 Rahu/Ketu 时：正面/负面/判定列改用 p1_p12「Dasha速查表节点专用正负面条件子表」（house_framework 六条对节点不可计算）；\"大运星P1\"列填\"—\"、\"尊贵度\"列填定位星状态。**\n**这个速查表是后续所有时间节点引用的\"对照卡\"。写板块时引用Dasha必须与速查表一致，不能临时改判定。**\n**行数要求：大运表≥5行（覆盖出生至今的全部大运 + 当前之后的一个大运 + 未来所有涉及格局参与星激活的大运；此类大运各补其9段AD分行），上方4行仅为格式示例。**"
+   "text": "**⚠️ 大运/小运星为 Rahu/Ketu 时：正面/负面/判定列改用 p1_p12「Dasha速查表节点专用正负面条件子表」（house_framework 六条对节点不可计算）；\"大运星P1\"列填\"—\"、\"尊贵度\"列填定位星状态。**\n**这个速查表是后续所有时间节点引用的\"对照卡\"。写板块时引用Dasha必须与速查表一致，不能临时改判定。**\n**⚠️ Moon 当值 MD/AD 的体感措辞按 p1_p12 P2.5 盈亏合成（亏月=续航弱≠内敛，禁把盈亏错译成外显度）。**\n**行数要求：大运表≥5行（覆盖出生至今的全部大运 + 当前之后的一个大运 + 未来所有涉及格局参与星激活的大运；此类大运各补其9段AD分行），上方4行仅为格式示例。**"
   },
   {
    "id": "A-SK-2e586969",
@@ -2230,8 +2230,8 @@
    "anchor": "A-SK-beb50ae8",
    "file": "SKILL.md",
    "title": "Step 4前置：Dasha回顾速查表（必须先生成）",
-   "section_hash": "e3732a6b7040",
-   "n_lines": 23
+   "section_hash": "6b8f21f53f66",
+   "n_lines": 24
   },
   {
    "anchor": "A-SK-2e586969",
@@ -2251,7 +2251,7 @@
    "anchor": "A-SK-42de71ff",
    "file": "SKILL.md",
    "title": "各板块内容指引",
-   "section_hash": "5d08e5255057",
+   "section_hash": "2cacc8c2f7b4",
    "n_lines": 89
   },
   {
