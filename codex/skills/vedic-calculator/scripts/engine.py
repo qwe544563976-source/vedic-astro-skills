@@ -305,6 +305,35 @@ def calc_aspects(planets):
     aspects.sort(key=lambda x: x['orb'])
     return aspects[:8]  # Top 8 most significant
 
+def calc_graha_drishti(planets):
+    """Parashari graha drishti（行星宫位相位，P10 规则数据化，禁模型手推）。
+    所有行星 → 第7宫；Mars +4/8；Jupiter +5/9；Saturn +3/10；Rahu 仅第7（放大）；Ketu 不计。
+    每颗星从其落宫数第 N 宫。返回 {planet: {from_house, aspected_houses, aspected_planets}}。
+    （注：这是吠陀 graha drishti = 宫位照射，与 calc_aspects 的西占度数相位是两套体系，别混。）
+    """
+    special = {'Mars': [4, 8], 'Jupiter': [5, 9], 'Saturn': [3, 10]}
+    drishti_planets = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu']
+    house_occupants = {}
+    for name in drishti_planets:
+        p = planets.get(name)
+        if p and 'house' in p:
+            house_occupants.setdefault(p['house'], []).append(name)
+    result = {}
+    for name in drishti_planets:
+        p = planets.get(name)
+        if not p or 'house' not in p:
+            continue
+        h = p['house']
+        angles = [7] + special.get(name, [])   # Rahu 无 special → 仅第7
+        aspected_houses = sorted(set(((h - 1 + (a - 1)) % 12) + 1 for a in angles))
+        aspected_planets = sorted(set(pl for hh in aspected_houses
+                                      for pl in house_occupants.get(hh, [])))
+        result[name] = {'from_house': h,
+                        'aspected_houses': aspected_houses,
+                        'aspected_planets': aspected_planets}
+    return result
+
+
 def calc_house_lords(lagna_sign_idx):
     """Calculate house lord table"""
     lords = {}
@@ -700,6 +729,7 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
     
     # 9. Aspects
     aspects = calc_aspects(planets)
+    graha_drishti = calc_graha_drishti(planets)  # P10 Parashari graha drishti（宫位照射，禁手推）
     
     # 10. House lords
     house_lords = calc_house_lords(lagna['sign_idx'])
@@ -787,6 +817,7 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
         'combustion': combustion,
         'karakas': karakas,
         'aspects': aspects,
+        'graha_drishti': graha_drishti,
         'house_lords': house_lords,
         'dashas': dashas,
         'shadbala': shadbala_data,

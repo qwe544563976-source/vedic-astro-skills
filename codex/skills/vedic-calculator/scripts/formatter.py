@@ -251,13 +251,28 @@ def format_structured_data(chart, transit_data, meta, user_info):
     lines.append("")
     
     # Aspects
-    lines.append("### 主要相位关系")
+    lines.append("### 主要相位关系（西占度数相位·orb 制）")
     lines.append("| 行星A | 行星B | 关系 | 度数差 | 影响 |")
     lines.append("|-------|-------|------|--------|------|")
     for a in chart['aspects'][:8]:
         lines.append(f"| {a['p1']} | {a['p2']} | {a['type']} | {a['degree_diff']}° | |")
     lines.append("")
-    
+
+    # Graha Drishti（吠陀行星相位=宫位照射，P10/格局互视读本表、禁手推）
+    lines.append("### Graha Drishti（吠陀行星相位·宫位照射）")
+    lines.append("> ⚠️ Parashari graha drishti（星→宫照射，P10/格局互视/rectifier 第3层读本表、禁手推）；"
+                 "与上面「主要相位关系」（西占度数相位）是两套体系，别混用")
+    lines.append("| 行星 | 落宫 | 照射宫位 | 照到的行星 |")
+    lines.append("|------|------|---------|-----------|")
+    gd = chart.get('graha_drishti', {})
+    for name in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu']:
+        if name in gd:
+            i = gd[name]
+            ah = '/'.join(str(x) for x in i['aspected_houses'])
+            ap = '/'.join(i['aspected_planets']) or '—'
+            lines.append(f"| {name} | {i['from_house']}宫 | {ah}宫 | {ap} |")
+    lines.append("")
+
     # House Lords
     lines.append("### 宫主表")
     lines.append("| 宫位 | 领域 | 宫主 | 宫主落宫 |")
