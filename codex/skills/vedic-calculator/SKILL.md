@@ -320,7 +320,7 @@ chart = {
 | Vimsottari Dasha | 9段大运 + 当前/下一大运Antardasha |
 | 特殊点位 | AL(Arudha Lagna) + UL(Upapada Lagna) |
 | Compound Dignity | Panchadha Maitri（旺/入庙/陷直接确定） |
-| 相位关系 | Top 8最重要相位 |
+| Graha Drishti | 吠陀行星相位（宫位照射：星→7th 等；西占 orb 相位表已废弃删除） |
 | 宫主表 | 12宫完整 |
 | 分盘 | D9/D10/D4/D5 + Vargottama |
 | 校验 | 12项自动校验 |

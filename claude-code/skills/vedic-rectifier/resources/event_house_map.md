@@ -47,7 +47,7 @@
 大运/小运主星落在事件对应宫位
 → "Jupiter大运期间结婚，Jupiter落在7宫" = 中匹配
 
-大运/小运主星照射事件对应宫位（照射 = graha drishti，读「Graha Drishti」表判定，见 SKILL Layer3；❌别用「主要相位关系」西占相位表）
+大运/小运主星照射事件对应宫位（照射 = graha drishti，读「Graha Drishti」表判定，见 SKILL Layer3；❌禁用西占 orb 相位，原「主要相位关系」表已废弃删除）
 → "Jupiter大运期间结婚，Jupiter从1宫照射7宫" = 中匹配
 
 大运/小运主星 = 事件的Karaka

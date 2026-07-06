@@ -265,52 +265,15 @@ def calc_chara_karakas_7k8k(planets):
         'dk_note': f"7K(主)={dk_7k}, 8K(参考)={dk_8k}"
     }
 
-def calc_aspects(planets):
-    """Calculate major aspects between planets"""
-    aspects = []
-    planet_names = list(planets.keys())
-    for i in range(len(planet_names)):
-        for j in range(i+1, len(planet_names)):
-            p1, p2 = planet_names[i], planet_names[j]
-            lon1, lon2 = planets[p1]['longitude'], planets[p2]['longitude']
-            diff = abs(lon1 - lon2)
-            if diff > 180: diff = 360 - diff
-            
-            # Check aspect types
-            aspect_type = None
-            orb = None
-            if diff < 10:
-                aspect_type = '合相'
-                orb = diff
-            elif abs(diff - 60) < 8:
-                aspect_type = '六合(60°)'
-                orb = abs(diff - 60)
-            elif abs(diff - 90) < 8:
-                aspect_type = '刑(90°)'
-                orb = abs(diff - 90)
-            elif abs(diff - 120) < 8:
-                aspect_type = '三合(120°)'
-                orb = abs(diff - 120)
-            elif abs(diff - 180) < 10:
-                aspect_type = '对冲(180°)'
-                orb = abs(diff - 180)
-            
-            if aspect_type and orb is not None:
-                aspects.append({
-                    'p1': p1, 'p2': p2, 'type': aspect_type,
-                    'degree_diff': round(diff, 2), 'orb': round(orb, 2)
-                })
-    
-    # Sort by orb (tighter aspects first)
-    aspects.sort(key=lambda x: x['orb'])
-    return aspects[:8]  # Top 8 most significant
+# calc_aspects（西占度数 orb 相位：合/六合/刑/三合/冲）已删除——不属 KN Rao/Parashari 体系、
+# 全体系无判定消费方、且是 love/career「相位关系表」命名歧义源。吠陀相位一律用 calc_graha_drishti（宫位照射）。
 
 def calc_graha_drishti(planets):
     """Parashari graha drishti（行星宫位相位，P10 规则数据化，禁模型手推）。
     所有行星 → 第7宫；Mars +4/8；Jupiter +5/9；Saturn +3/10；Rahu/Ketu 仅第7（无特殊相位）。
     节点口径对齐底层 jhora const.graha_drishti（Rahu=[7]、Ketu=[7]）；Rahu 带 amplify=True（相位=放大/膨胀迷惑）。
     每颗星从其落宫数第 N 宫。返回 {planet: {from_house, aspected_houses, aspected_planets, amplify}}。
-    （注：这是吠陀 graha drishti = 宫位照射，与 calc_aspects 的西占度数相位是两套体系，别混。）
+    （注：这是吠陀 graha drishti = 宫位照射；西占度数 orb 相位已废弃删除、不属本体系，勿混淆。）
     """
     special = {'Mars': [4, 8], 'Jupiter': [5, 9], 'Saturn': [3, 10]}
     # 含 Ketu：对齐底层 jhora const.graha_drishti（Rahu=[7]、Ketu=[7]），节点保留基础对宫第7、不给特殊相位
@@ -730,8 +693,7 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
     # 8. Chara Karakas (7K primary)
     karakas = calc_chara_karakas_7k8k(planets)
     
-    # 9. Aspects
-    aspects = calc_aspects(planets)
+    # 9. Graha drishti（吠陀宫位照射）——西占 orb 相位表已废弃删除：不属 KN Rao 体系、无判定消费方
     graha_drishti = calc_graha_drishti(planets)  # P10 Parashari graha drishti（宫位照射，禁手推）
     
     # 10. House lords
@@ -819,7 +781,6 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
         'varga_internal': varga_internal,
         'combustion': combustion,
         'karakas': karakas,
-        'aspects': aspects,
         'graha_drishti': graha_drishti,
         'house_lords': house_lords,
         'dashas': dashas,
@@ -870,10 +831,6 @@ if __name__ == '__main__':
     for k, planet, deg in chart['karakas']['7k']:
         print(f"  {k}: {planet} ({deg:.1f}°)")
     print(f"  DK: 7K(主)={chart['karakas']['dk_7k']}, 8K(参考)={chart['karakas']['dk_8k']}")
-    
-    print(f"\n--- Aspects (top 5) ---")
-    for a in chart['aspects'][:5]:
-        print(f"  {a['p1']}-{a['p2']}: {a['type']} ({a['degree_diff']}°, orb {a['orb']}°)")
     
     print(f"\n--- Dasha ---")
     for d in chart['dashas']:
