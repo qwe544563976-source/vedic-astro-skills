@@ -297,6 +297,21 @@ def format_structured_data(chart, transit_data, meta, user_info):
                 lines.append(f"| {cn} | {act} | {v['lord']} | {v['lord_house']}宫 | {v['rule']} |")
         lines.append("")
 
+    # 格局关系类（互视/互溶下沉，格局条件"互视/互溶"读本段、禁自推）
+    md_pairs = chart.get('mutual_drishti', [])
+    pv = chart.get('parivartana', [])
+    lines.append("### 格局关系类 · 互视 / 互溶（calc 核验·禁自推）")
+    lines.append("> ⚠️ 格局条件里的\"互视/互溶\"一律读本段，❌禁手推。**互视=双向**（单向照射已排除）；"
+                 "**格局的\"宫主互视\"只取行星宫主对**——节点 Rahu/Ketu 不掌宫、不参与格局判定（下表若含节点对，属数据完整、格局忽略）。")
+    lines.append(f"- **互视对（双向 mutual）**：{('、'.join('+'.join(p) for p in md_pairs)) if md_pairs else '无'}")
+    if pv:
+        lines.append("- **互溶对（parivartana）**：")
+        for x in pv:
+            lines.append(f"  · {x['houses'][0]}宫↔{x['houses'][1]}宫（{x['lords'][0]}↔{x['lords'][1]}，{x['type']}）")
+    else:
+        lines.append("- **互溶对（parivartana）**：无")
+    lines.append("")
+
     # House Lords
     lines.append("### 宫主表")
     lines.append("| 宫位 | 领域 | 宫主 | 宫主落宫 |")

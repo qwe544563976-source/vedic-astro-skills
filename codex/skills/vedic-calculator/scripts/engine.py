@@ -358,6 +358,44 @@ def calc_yoga_prescan(lagna_sign_idx, planets):
                     'rule': f'{h}宫主落其他凶宫{sorted(DUS - {h})}（自宫不算）'}
     return {'vry': vry}
 
+def calc_mutual_drishti(graha_drishti):
+    """互视对（mutual drishti，格局"互视"唯一口径）：A照B落宫 且 B照A落宫（双向），
+    单向照射不算。基于 graha_drishti 的 aspected_planets 两两判双向。返回 [[A,B],...]。"""
+    pairs = []
+    names = list(graha_drishti.keys())
+    for i in range(len(names)):
+        for j in range(i + 1, len(names)):
+            a, b = names[i], names[j]
+            if b in graha_drishti[a]['aspected_planets'] and a in graha_drishti[b]['aspected_planets']:
+                pairs.append(sorted([a, b]))
+    return pairs
+
+def calc_parivartana(house_lords, planets):
+    """互溶对（parivartana，格局"互溶"唯一口径）：X宫主落Y宫 且 Y宫主落X宫（两宫主互换落座）。
+    分类：凶宫(6/8/12)互换=Dainya、含3宫=Khala、吉宫互换=Maha。返回 [{houses,lords,type},...]。"""
+    BENEFIC = {1, 2, 4, 5, 7, 9, 10, 11}
+    DUS = {6, 8, 12}
+    pairs = []
+    for x in range(1, 13):
+        for y in range(x + 1, 13):
+            lx = house_lords[x]['lord']
+            ly = house_lords[y]['lord']
+            if lx == ly:
+                continue  # 同一星管两宫，不构成互溶
+            hx = planets.get(lx, {}).get('house')
+            hy = planets.get(ly, {}).get('house')
+            if hx == y and hy == x:
+                if x in DUS and y in DUS:
+                    kind = 'Dainya(凶宫互溶)'
+                elif x == 3 or y == 3:
+                    kind = 'Khala(3宫参与)'
+                elif x in BENEFIC and y in BENEFIC:
+                    kind = 'Maha(吉宫互溶)'
+                else:
+                    kind = 'Mixed'
+                pairs.append({'houses': [x, y], 'lords': [lx, ly], 'type': kind})
+    return pairs
+
 def calc_vimsottari_dasha(moon_lon, birth_year, birth_month, birth_day, birth_hour, birth_minute):
     """Calculate Vimsottari Dasha periods"""
     nak = get_nakshatra(moon_lon)
@@ -754,7 +792,9 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
         planet = info['lord']
         if planet in planets:
             info['lord_house'] = planets[planet]['house']
-    
+    mutual_drishti = calc_mutual_drishti(graha_drishti)   # 互视对（双向，格局"互视"唯一口径，单向不算）
+    parivartana = calc_parivartana(house_lords, planets)  # 互溶对（两宫主互换落座，格局"互溶"唯一口径）
+
     # 11. Vimsottari Dasha (PyJHora — no fallback)
     dashas = _dasha_pyjhora(year, month, day, hour, minute, lat, lon, _tz_offset)
     
@@ -835,6 +875,8 @@ def calculate_full_chart(year, month, day, hour, minute, lat, lon, tz_str="Asia/
         'graha_drishti': graha_drishti,
         'functional': functional,
         'yoga_prescan': yoga_prescan,
+        'mutual_drishti': mutual_drishti,
+        'parivartana': parivartana,
         'house_lords': house_lords,
         'dashas': dashas,
         'shadbala': shadbala_data,
