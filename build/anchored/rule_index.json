@@ -1,13 +1,13 @@
 {
- "source_commit": "2b1901da05c8",
- "generated_at": "2026-07-10T18:33:32Z",
+ "source_commit": "294e60425cc7",
+ "generated_at": "2026-07-11T04:46:34Z",
  "repo": "vedic-astrology-skills",
  "anchor_count": 283,
  "section_count": 113,
  "file_hashes": {
   "SKILL.md": "85cdfba01a14",
-  "resources/p1_p12.md": "3df88803c633",
-  "resources/yogas.md": "67c595a172c2",
+  "resources/p1_p12.md": "d9e0bda592a5",
+  "resources/yogas.md": "8618e06f11ce",
   "resources/house_framework.md": "65d1ff1cb131",
   "resources/qa_rules.md": "fba48e552d23"
  },
@@ -1095,7 +1095,7 @@
    "file": "resources/p1_p12.md",
    "level": "L2",
    "title": "入旺(Exalted) = F1赛车（最高性能）",
-   "text": "```\n入旺(Exalted) = F1赛车（最高性能）\nMoolatrikona(MT) = 特等座驾\n入庙(Own) = 豪华车（在自己家，舒适）\n友方(Friend) = 普通车（还行）\n中性(Neutral) = 一般\n敌方(Enemy) = 破车（不舒服）\n落陷(Debilitated) = 故障车\n\n落陷补救(NBRY - Neecha Bhanga Raja Yoga)：\n  以下任一条满足即触发部分或完全补救：\n  1. 落陷星本身在角宫(1/4/7/10) → 位置补救（最基础条件）\n  2. 落陷星的落座主（dispositor）在角宫 → 后台补救\n  3. 落陷星有吉星（Jupiter/Venus/Mercury/Moon）相位 → 外援补救\n  4. 落陷星的旺主（该星入旺星座的守护星）在角宫或三角宫 → 潜力激活\n  5. 落陷星与旺主合相 → 直接激活\n  6. 落陷星的落座主自身强健（入旺/入庙/友方且Shadbala≥100%） → 基座托举\n\n  补救强度判定（互斥分档）：\n    满足1条 → [部分补救] 效力恢复40-60%\n    满足2条 → [强力补救] 效力恢复70-90%\n    满足≥3条 → [完全补救] 视同正常行星（→ 大运负面条件2 不再计入\"落陷\"，落陷已取消；燃烧/败相若在仍计。见 house_framework 负面条件2）\n\n  ⚠️ D9入旺/D9强不在上述六条救济项内——D1弱+D9强不构成NBRY，\n    唯一裁决见下方\"身份继承矩阵补充档\"\n\nPushkara补丁（唯一定义——D9审计\"落陷检查Pushkara补丁\"指的就是本条）：\n  Pushkara Navamsa = 行星落在滋养性的navamsa区段（每星座固定两个），\n    落入者受滋养保护——受损/落陷行星获得恢复力缓冲，困境后能回血；\n  Pushkara Bhaga = 星座内一个精确滋养度数点，效力更强的点状加持。\n  判定：❌ 不要自行按度数推算——structured_data 的\n  \"Pushkara Navamsa（滋养保护区）/ Pushkara Bhaga（精确滋养度）\"行由calc精确计算，直接读。\n  应用：落陷星在Pushkara → 违约程度减轻一档（如\"违约\"缓和为\"艰难但可恢复\"）；\n        正常星在Pushkara → 顺境更稳，锦上添花，一句带过即可。\n\n  ⚠️ 审计时必须逐条检查，不可只查1-2条就下结论\n```"
+   "text": "```\n入旺(Exalted) = F1赛车（最高性能）\nMoolatrikona(MT) = 特等座驾\n入庙(Own) = 豪华车（在自己家，舒适）\n友方(Friend) = 普通车（还行）\n中性(Neutral) = 一般\n敌方(Enemy) = 破车（不舒服）\n落陷(Debilitated) = 故障车\n\n落陷补救(NBRY - Neecha Bhanga Raja Yoga)：\n  以下任一条满足即触发部分或完全补救：\n  1. 落陷星本身在角宫(1/4/7/10) → 位置补救（最基础条件）\n  2. 落陷星的落座主（dispositor）在角宫 → 后台补救\n  3. 落陷星有吉星（Jupiter/Venus/Mercury/Moon）相位 → 外援补救\n  4. 落陷星的旺主（该星入旺星座的守护星）在角宫或三角宫 → 潜力激活\n  5. 落陷星与旺主合相 → 直接激活\n  6. 落陷星的落座主自身强健（入旺/入庙/友方且Shadbala≥100%） → 基座托举\n\n  ⚠️ **计条数前先去重**：同一底层事实支撑多条救济项时**只计一条**——如落陷星的座主自身旺庙且在角宫，可能同时命中\"座主在角宫\"与\"座主强健\"等多条，去重后按一条算；避免同一事实虚高凑满 3 条、误判\"完全补救\"。\n  补救强度判定（互斥分档）：\n    满足1条 → [部分补救] 效力恢复40-60%\n    满足2条 → [强力补救] 效力恢复70-90%\n    满足≥3条 → [完全补救] 视同正常行星（→ 大运负面条件2 不再计入\"落陷\"，落陷已取消；燃烧/败相若在仍计。见 house_framework 负面条件2）\n\n  ⚠️ D9入旺/D9强不在上述六条救济项内——D1弱+D9强不构成NBRY，\n    唯一裁决见下方\"身份继承矩阵补充档\"\n\nPushkara补丁（唯一定义——D9审计\"落陷检查Pushkara补丁\"指的就是本条）：\n  Pushkara Navamsa = 行星落在滋养性的navamsa区段（每星座固定两个），\n    落入者受滋养保护——受损/落陷行星获得恢复力缓冲，困境后能回血；\n  Pushkara Bhaga = 星座内一个精确滋养度数点，效力更强的点状加持。\n  判定：❌ 不要自行按度数推算——structured_data 的\n  \"Pushkara Navamsa（滋养保护区）/ Pushkara Bhaga（精确滋养度）\"行由calc精确计算，直接读。\n  应用：落陷星在Pushkara → 违约程度减轻一档（如\"违约\"缓和为\"艰难但可恢复\"）；\n        正常星在Pushkara → 顺境更稳，锦上添花，一句带过即可。\n\n  ⚠️ 审计时必须逐条检查，不可只查1-2条就下结论\n```"
   },
   {
    "id": "A-P12-f36f9973",
@@ -1263,7 +1263,7 @@
    "file": "resources/yogas.md",
    "level": "L2",
    "title": "用途：core在十大板块第10项\"格局评估\"时参考",
-   "text": "> 用途：core在十大板块第10项\"格局评估\"时参考\n> 原则：说潜力和突破口，不定命\n> ⚠️ **互视 = graha drishti（宫位照射）**：所有格局条件里的\"互视\"一律读 structured_data 的「Graha Drishti」表判定（calc 已算好、口径 p1_p12 P10）——❌禁手推、❌禁用西占度数 orb 相位（六合/三合/刑/冲——不属本体系，原「主要相位关系」表已废弃删除）。\n> ⚠️ **合相 = 同 rashi 同宫**（看落宫/同星座；度数强弱分档唯一口径见 p1_p12「合相度数三档」）——❌不是西占跨座 orb 角。**互溶 = parivartana**（两宫主互换落座）。"
+   "text": "> 用途：core在十大板块第10项\"格局评估\"时参考\n> 原则：说潜力和突破口，不定命\n> ⚠️ **互视 = graha drishti（宫位照射）**：所有格局条件里的\"互视\"一律读 structured_data 的「Graha Drishti」表判定（calc 已算好、口径 p1_p12 P10）——❌禁手推、❌禁用西占度数 orb 相位（六合/三合/刑/冲——不属本体系，原「主要相位关系」表已废弃删除）。\n> ⚠️ **互视必须双向（mutual）**：A 照 B 落宫 **且** B 照 A 落宫（两个方向都要在「Graha Drishti」表成立，即 A 的\"照到的行星\"含 B、B 的也含 A）；**单向照射（只一方照另一方）= 弱信号，❌不构成格局的\"互视/互动\"、不成格局**（如 Dharma-Karma 只有 9L 单向照 10L、非合相非互溶 → 不成立）。\n> ⚠️ **合相 = 同 rashi 同宫**（看落宫/同星座；度数强弱分档唯一口径见 p1_p12「合相度数三档」）——❌不是西占跨座 orb 角。**互溶 = parivartana**（两宫主互换落座）。"
   },
   {
    "id": "A-YG-83e33c19",
@@ -2405,8 +2405,8 @@
    "anchor": "A-P12-561676e8",
    "file": "resources/p1_p12.md",
    "title": "P7 尊贵度 [关键权重]",
-   "section_hash": "4d9724f76983",
-   "n_lines": 42
+   "section_hash": "1938f37ce477",
+   "n_lines": 43
   },
   {
    "anchor": "A-P12-f36f9973",
