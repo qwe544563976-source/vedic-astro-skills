@@ -2,6 +2,7 @@
 
 > 盲审/验前事的统一规范，vedic-reader 的验前事 与 vedic-rectifier 的 Step 5 盘外验证共用。
 > ⚠️ 维护依赖：本文件抽取自 vedic-reader 的 Step 5；reader 改动验前事方法时需同步本文件。
+> ⚠️ **rectifier 复用须知（审计 #17 映射注）**：本文件保留了 reader 语境的**流程指针**——标题"Step 5"编号、文末"→ 进core / → 转vedic-rectifier"出口分支、"见 vedic-reader『…』"章节指针。**rectifier 复用时这些一律按自身语境读或忽略**："转vedic-rectifier"=你已在此(自引，忽略)、"进core"=读作 rectifier 自身 Step 4 结论输出、"Step 5"=rectifier 的盘外验证步、"见 vedic-reader…"=跨 skill 参考。**两 skill 真正共用的是方法学**(多推法一致性/时间可信度分级/安全约束)，不是这些流程走向。
 
 ---
 
