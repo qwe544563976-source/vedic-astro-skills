@@ -1,0 +1,40 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/model_assignment_reminder.py",
+            "timeout": 10,
+            "statusMessage": "检查是否需要注入模型分配提醒"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/workflow_model_gate.py",
+            "timeout": 15,
+            "statusMessage": "守门:检查workflow子任务是否都指定了模型"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/agent_foreground_gate.py",
+            "timeout": 10,
+            "statusMessage": "守门:检查子任务是否前台同步"
+          }
+        ]
+      }
+    ]
+  }
+}
